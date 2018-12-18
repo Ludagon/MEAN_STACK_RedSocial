@@ -27,6 +27,7 @@ function saveMessage(req, res) {
     message.receiver = params.receiver;
     message.text = params.text;
     message.created_at = moment().unix();
+    message.viewed = 'false';
 
     message.save((err, messageStored) => {
         if (err) return res.status(500).send({ message: 'Error en la peticion' });
@@ -58,7 +59,7 @@ function getReceivedMessages(req, res) {
     });
 }
 
-function getReceivedMessages(req, res) {
+function getEmmitedMessages(req, res) {
     var userId = req.user.sub;
 
     var page = 1;
@@ -68,7 +69,7 @@ function getReceivedMessages(req, res) {
 
     var itemsPerPage = 4;
 
-    Message.find({ receiver: userId }).populate('emitter', 'name surname nick image _id').paginate(page, itemsPerPage, (err, messages, total) => {
+    Message.find({ emitter: userId }).populate('emitter receiver', 'name surname nick image _id').paginate(page, itemsPerPage, (err, messages, total) => {
         if (err) return res.status(500).send({ message: 'Error en la peticion' });
         if (!messages) return res.status(404).send({ message: 'No hay mensajes' });
 
@@ -80,8 +81,33 @@ function getReceivedMessages(req, res) {
     });
 }
 
+function getUnviewedMessages(req, res) {
+    var userId = req.user.sub;
+
+    Message.countDocuments({ receiver: userId, viewed: 'false' }).exec((err, count) => {
+        if (err) return res.status(500).send({ message: 'Error en la peticion' });
+        return res.status(200).send({
+            'unviewed': count
+        });
+    })
+}
+
+function SetViewMessages(req, res) {
+    var userId = req.user.sub;
+
+    Message.update({ receiver: userId, viewed: 'false' }, { viewed: 'true' }, { "multi": true }, (err, messagesUpdated) => {
+        if (err) return res, status(500).send({ message: 'Error en la petición' });
+        return res.status(200).send({
+            messages: messagesUpdated
+        });
+    });
+}
+
 module.exports = {
     prueba,
     saveMessage,
-    getReceivedMessages
+    getReceivedMessages,
+    getEmmitedMessages,
+    getUnviewedMessages,
+    SetViewMessages
 }
