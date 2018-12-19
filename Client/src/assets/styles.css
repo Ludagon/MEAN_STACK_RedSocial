@@ -1,0 +1,28 @@
+/* You can add global styles to this file, and also import other style files */
+
+
+/* Titles */
+
+.h1-registro {
+    font-size: 35px;
+    font-weight: bold;
+    margin-left: 13px;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+
+/* Header */
+
+.navbar {
+    border-radius: 0px;
+    background: #bd2020 !important;
+    /* padding: 0px !important; */
+    padding: 5px 15px 5px 15px;
+    margin-bottom: 15px;
+}
+
+.navbar * {
+    color: white !important;
+}
